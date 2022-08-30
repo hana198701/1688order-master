@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>工作台</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <style>
+        .layui-form-label{
+            width: 140px;
+        }
+        #time{
+            width:180px ;
+        }
+    </style>
+</head>
+<body style="background-color: #F2F2F2;" >
+<div style="padding: 20px; ">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    欢迎使用订单管理系统
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.use(['table','form','jquery','laydate'], function(){
+        var table = layui.table;
+        var form=layui.form;
+        var $=layui.$;
+        var layer=layui.layer;
+        var laydate=layui.laydate;
+        
+    });
+
+</script>
+
+</body>
+</html>

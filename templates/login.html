@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单管理系统</title>
+</head>
+<body>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>请登录</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+  <link rel="stylesheet" href="/static/layuiadmin/style/login.css" media="all">
+</head>
+<body>
+
+  <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+
+    <div class="layadmin-user-login-main">
+      <div class="layadmin-user-login-box layadmin-user-login-header">
+        <h2>订单管理系统</h2>
+        <p>管理后台</p>
+      </div>
+
+      <form action="/loginCheck" method="post">
+        <div class=" layui-form">
+          <div class="layui-form-item">
+            <input type="text" name="username" id="LAY-user-login-username" lay-verify="required" placeholder="用户名" class="layui-input">
+          </div>
+          <div class="layui-form-item">
+            <input type="password" name="password" id="LAY-user-login-password" lay-verify="required" placeholder="密码" class="layui-input">
+          </div>
+
+          </div>
+
+
+          <div class="layui-form-item">
+            <div class="layui-input-block" style="margin: 0 auto;text-align: center">
+              <button class="layui-btn" lay-submit lay-filter="formDemo">登录</button>
+            </div>
+          </div>
+
+      </form>
+
+    </div>
+
+
+
+  </div>
+  <script src="/static/layuiadmin/layui/layui.js"></script>
+  <script>
+    //根据layui用法，引入jquery和layer模块
+    layui.use(['jquery', 'layer','form'], function(){
+
+      var $=layui.jquery;
+      var layer=layui.layer;
+      var form=layui.form;
+      //取input框里的提示信息
+      var msg='{{msg}}'
+      //如果信息不为空，则弹框提示
+      if(msg!==''){
+        layer.msg(msg);
+      }
+    });
+  </script>
+</body>
+</html>
+</body>
+</html>

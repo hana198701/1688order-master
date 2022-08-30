@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>销售汇总（日本站）</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <style>
+        .layui-form-label{
+            width: 60px;
+        }
+    .laytable-cell-1-0-9 {
+        height:auto; overflow:visible; text-overflow:inherit; white-space:normal;
+    }
+    .laytable-cell-1-0-1 {
+        height:auto; overflow:visible; text-overflow:inherit; white-space:normal;
+    }
+    .laytable-cell-1-0-2 {
+        height:auto; overflow:visible; text-overflow:inherit; white-space:normal;
+    }
+    .laytable-cell-1-0-3 {
+        height:auto; overflow:visible; text-overflow:inherit; white-space:normal;
+    }
+    .laytable-cell-1-0-4 {
+        height:auto; overflow:visible; text-overflow:inherit; white-space:normal;
+    }
+    .laytable-cell-1-0-5 {
+        height:auto; overflow:visible; text-overflow:inherit; white-space:normal;
+    }
+    .laytable-cell-1-0-6 {
+        height:auto; overflow:visible; text-overflow:inherit; white-space:normal;
+    }
+    .laytable-cell-1-0-7 {
+        height:auto; overflow:visible; text-overflow:inherit; white-space:normal;
+    }
+    .laytable-cell-1-0-8 {
+        height:auto; overflow:visible; text-overflow:inherit; white-space:normal;
+    }
+     .laytable-cell-1-0-10 {
+        height:auto; overflow:visible; text-overflow:inherit; white-space:normal;
+    }
+    </style>
+</head>
+<body style="background-color: #F2F2F2;" >
+<div style="padding: 20px; ">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-form" action="" style="margin-top: 8px">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <!--<label class="layui-form-label">订单状态</label>-->
+                                <select name="shiptype">
+                                    <option>空运</option>
+                                    <option>海运整柜</option>
+                                    <option>海运快船</option>
+                                </select>
+                                <!--<div class="layui-input-inline" style="width: 150px;">
+                                    <input type="text" name="orderId" lay-verify="title" autocomplete="off" placeholder="" class="layui-input">
+                                </div>-->
+
+                                <!--<label class="layui-form-label">下单账号</label>
+                                <div class="layui-input-inline" style="width: 150px;">
+                                    <input type="text" name="buyerLoginId" lay-verify="buyerLoginId" autocomplete="off" placeholder="" class="layui-input">
+                                </div>-->
+                              
+                                <div class="layui-input-inline">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="layui-btn" id="search">查询</button>
+                                    <button type="reset" class="layui-btn" id="reset">清空</button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+                    <table class="layui-hide" id="table" lay-filter="table"></table>
+
+{#                    <script type="text/html" id="toolbar">#}
+{#                        <div class="layui-btn-container">#}
+{#                            <button class="layui-btn layui-btn-sm" lay-event="sync">同步数据</button>#}
+{#                        </div>#}
+{#                    </script>#}
+
+{#                    <script type="text/html" id="bar">#}
+{#                        <a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>#}
+{#                        <a class="layui-btn layui-btn-xs" lay-event="trace">物流</a>#}
+{#                    </script>#}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+
+<script>
+    layui.use(['table','form','jquery','laydate','util'], function(){
+        var table = layui.table;
+        var form=layui.form;
+        var $=layui.$;
+        var layer=layui.layer;
+        var laydate=layui.laydate;
+        var util=layui.util;
+        //日期选择
+        laydate.render({
+            elem: '#year'
+            ,trigger: 'click'//呼出事件改成click
+            ,type: 'year'
+        });
+
+        var addLayerIndex='';
+        table.render({
+            elem: '#table'
+            ,url:'/getPageList'
+            ,method:'post'
+            ,contentType: "application/json;charset=UTF-8"
+            ,dataType: 'json'
+            ,done:function (res,curr,count) {
+
+                layuiRowspan(['SellerId','SellerSKU','Unit'],1);
+                layuiRowspan(res.data,1);//支持数组
+                layuiRowspan(count,1,true);
+            }
+            //,toolbar: '#toolbar' //开启头部工具栏，并为其绑定左侧模板
+            ,defaultToolbar: [
+            ]
+            ,title: '${page}'
+            ,cols: [[
+                 //{type: 'checkbox', fixed: 'left'}
+                 { field: 'SellerSKU', title: 'SKU', width: 120, align: 'center', sort: 'true' }
+                , { field: 'cnName', title: '中文简名', width: 220, align: 'center', sort: 'true' }
+                , { field: 'Unit', title: '销量', event: 'setSign', align: 'center', sort: 'true' }
+                , { field: 'TotalSupplyQuantity', title: '总库存', align: 'center', sort: 'true' }
+                , { field: 'InStockSupplyQuantity', title: 'FBA库存', align: 'center', sort: 'true' }
+
+
+                //,{fixed: 'right', title:'操作', toolbar: '#bar', width:120}#}
+            ]]
+            ,where:{orderId:"",buyerLoginId:""}  //添加查询条件
+            , page: true
+            , limit: 200
+            , limits : [100,200,300,500]
+
+            ,parseData: function(res){ //res 即为原始返回的数据
+                console.log(res)
+                return {
+                    "code": res.data.code, //解析接口状态
+                    "msg": res.data.msg, //解析提示文本
+                    "count": res.data.count, //解析数据长度
+                    "data": res.data.data //解析数据列表
+                };
+            }
+        });
+
+     //监听单元格编辑
+  table.on('edit(table)', function(obj){
+    var value = obj.value //得到修改后的值
+    ,data = obj.data //得到所在行所有键值
+    ,field = obj.field; //得到字段
+
+      var param={
+          id:data.id,
+          note:value
+      }
+
+  });
+
+
+    var execRowspan = function(fieldName,index,flag){
+        // 1为不冻结的情况，左侧列为冻结的情况
+        let fixedNode = index=="1"?$(".layui-table-body")[index - 1]:(index=="3"?$(".layui-table-fixed-r"):$(".layui-table-fixed-l"));
+        // 左侧导航栏不冻结的情况
+        let child = $(fixedNode).find("td");
+        let childFilterArr = [];
+        // 获取data-field属性为fieldName的td
+        for(let i = 0; i < child.length; i++){
+          if(child[i].getAttribute("data-field") == fieldName){
+            childFilterArr.push(child[i]);
+          }
+        }
+  // 获取td的个数和种类
+  let childFilterTextObj = {};
+  for(let i = 0; i < childFilterArr.length; i++){
+    let childText = flag?childFilterArr[i].innerHTML:childFilterArr[i].textContent;
+    if(childFilterTextObj[childText] === undefined){
+      childFilterTextObj[childText] = 1;
+    }else{
+      let num = childFilterTextObj[childText];
+      childFilterTextObj[childText] = num*1 + 1;
+    }
+  }
+  let canRowspan = true;
+  let maxNum;//以前列单元格为基础获取的最大合并数
+  let finalNextIndex;//获取其下第一个不合并单元格的index
+  let finalNextKey;//获取其下第一个不合并单元格的值
+  for(let i = 0; i < childFilterArr.length; i++){
+    (maxNum>9000||!maxNum)&&(maxNum = $(childFilterArr[i]).prev().attr("rowspan")&&fieldName!="8"?$(childFilterArr[i]).prev().attr("rowspan"):9999);
+    let key = flag?childFilterArr[i].innerHTML:childFilterArr[i].textContent;//获取下一个单元格的值
+    let nextIndex = i+1;
+    let tdNum = childFilterTextObj[key];
+    let curNum = maxNum<tdNum?maxNum:tdNum;
+    if(canRowspan){
+      for(let j =1;j<=curNum&&(i+j<childFilterArr.length);){//循环获取最终合并数及finalNext的index和key
+        finalNextKey = flag?childFilterArr[i+j].innerHTML:childFilterArr[i+j].textContent;
+        finalNextIndex = i+j;
+        if((key!=finalNextKey&&curNum>1)||maxNum == j){
+          canRowspan = true;
+          curNum = j;
+          break;
+        }
+        j++;
+        if((i+j)==childFilterArr.length){
+          finalNextKey=undefined;
+          finalNextIndex=i+j;
+          break;
+        }
+      }
+
+      childFilterArr[i].setAttribute("rowspan",curNum);
+      if($(childFilterArr[i]).find("div.rowspan").length>0){//设置td内的div.rowspan高度适应合并后的高度
+        $(childFilterArr[i]).find("div.rowspan").parent("div.layui-table-cell").addClass("rowspanParent");
+        $(childFilterArr[i]).find("div.layui-table-cell")[0].style.height= curNum*38-10 +"px";
+      }
+      canRowspan = false;
+    }else{
+      childFilterArr[i].style.display = "none";
+    }
+    if(--childFilterTextObj[key]==0|--maxNum==0|--curNum==0|(finalNextKey!=undefined&&nextIndex==finalNextIndex)){//||(finalNextKey!=undefined&&key!=finalNextKey)
+      canRowspan = true;
+    }
+  }
+
+}
+
+
+
+        //头工具栏事件
+        table.on('toolbar(table)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    console.log(data)
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：'+ data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选': '未全选');
+                    break;
+
+                //自定义头工具栏右侧图标 - 提示
+                case 'LAYTABLE_TIPS':
+                    layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                    break;
+                //自定义头工具栏右侧图标 - 提示
+                case 'add':
+                    layer.open({
+                        title:'新增',
+                        type: 2,
+                        area: ['500px', '440px'],
+                        // area: '30%',
+                        content: ['/studentLayer'], //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+                        btn: ['确认','取消'], //按钮
+                        yes:function (index,layero) {
+                            addLayerIndex=index;
+                            // var son = window['layui-layer-iframe' + index];
+                            // son.child(111);
+                            //获取子窗口的函数
+                            var formSubmit=layer.getChildFrame('form', index);
+                            console.log(formSubmit)
+                            var submited = formSubmit.find('button')[0];
+                            submited.click()
+                        }
+                    });
+                    break;
+
+            };
+        });
+
+        //监听行工具事件
+        table.on('tool(table)', function(obj){
+            var data = obj.data;
+            var idAry=[];
+            idAry.push(data.id);
+            var param={}
+            param.ids=idAry;
+            param.table='${page}'
+
+            if(obj.event==='replaceProduct'){
+                 layer.prompt({
+                     formType: 2
+                     ,title: '将该货品标题替换为'
+                     ,value: data.sign
+                 }, function(value, index){
+                 layer.close(index);
+                 console.log(obj)
+                //这里一般是发送修改的Ajax请求
+                var param={
+                     id:data.productID,
+                     content:value
+                }
+                $.ajax({
+                    type:"post",
+                    url: "/replace",
+                    contentType:'application/json; charset=UTF-8',
+                    data : JSON.stringify(param),
+                    success: function(res) {
+                        console.log(res)
+                        res=JSON.parse(res)
+                        if(res.code===200){
+                            table.reload('table')
+                        }
+                    },
+                    error: function(res) {
+                        layer.alert(res.msg,{icon:2})
+                    }
+                })
+                //同步更新表格和缓存对应的值
+                obj.update({
+                    sign: value
+                });
+                });
+            }else if(obj.event==='replaceReceive'){
+                 layer.prompt({
+                     formType: 2
+                     ,title: '将该收货地址替换为'
+                     ,value: data.sign
+                 }, function(value, index){
+                 layer.close(index);
+                 console.log(value)
+                //这里一般是发送修改的Ajax请求
+                 var param={
+                     id:data.receiverInfo,
+                     content:value
+                }
+                $.ajax({
+                    type:"post",
+                    url: "/replace",
+                    contentType:'application/json; charset=UTF-8',
+                    data : JSON.stringify(param),
+                    success: function(res) {
+                        console.log(res)
+                        res=JSON.parse(res)
+                        if(res.code===200){
+                            table.reload('table')
+                        }
+                    },
+                    error: function(res) {
+                        layer.alert(res.msg,{icon:2})
+                    }
+                })
+                //同步更新表格和缓存对应的值
+                obj.update({
+                    sign: value
+                });
+                });
+            }else if(obj.event === 'detail'){
+                layer.open({
+                    title:'详情',
+                    type: 2,
+                    area: ['500px', '440px'],
+                    // area: '30%',
+                    content: ['orderDetail?id='+data.id], //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+                    btn: ['确认','取消'], //按钮
+                    yes:function (index,layero) {
+                        addLayerIndex=index;
+                        // var son = window['layui-layer-iframe' + index];
+                        // son.child(111);
+                        //获取子窗口的函数
+                        var formSubmit=layer.getChildFrame('form', index);
+                        console.log(formSubmit)
+                        var submited = formSubmit.find('button')[0];
+                        submited.click()
+
+                    }
+                });
+            }
+        });
+
+        //查询按钮
+
+        $("#search").click(function () {
+            var orderId=$("input[name='orderId']").val();
+            //var statusStr=$("input[name='statusStr]").val();
+            var buyerLoginId= $("input[name='buyerLoginId']").val();
+
+            //var desc=$("input[name='desc']").val();
+            //列表的重载
+            table.reload('table', {
+                page:{curr:1}
+                ,where: {orderId: orderId,buyerLoginId:buyerLoginId}
+                }
+            );
+
+
+        });
+
+        //关闭新增layer
+        window.closeAddLayer=function () {
+            layer.close(addLayerIndex)
+        }
+        //重载客户列表
+        window.reloadList=function(){
+            table.reload('table')
+        }
+    });
+
+</script>
+</body>
+</html>
